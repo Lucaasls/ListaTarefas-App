@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { ListagemService } from 'src/app/service/listagem.service';
 
 @Component({
@@ -10,7 +11,7 @@ export class ListagemComponent {
 
   listas: any[] = [];
 
-  constructor(private serviceTarefa: ListagemService){}
+  constructor(private serviceTarefa: ListagemService, private toastr: ToastrService){}
 
   ngOnInit(): void{
     this.serviceTarefa.firestoreCollection.valueChanges({idField:'id'})
@@ -20,17 +21,24 @@ export class ListagemComponent {
   }
 
 onClick(tituloInput: HTMLInputElement){
-    if(tituloInput){
+  debugger
+    if(tituloInput.value){
       this.serviceTarefa.add(tituloInput.value);
+      this.toastr.success('Sua tarefa foi adicionada!', 'Deu certo.');
       tituloInput.value = "";
+    }
+    else{
+      this.toastr.warning('Insira alguma tarefa!', 'Ops...');
     }
   }
 
 onConcluirTarefa(id: string, newStatus: boolean){
   this.serviceTarefa.update(id,newStatus);
+  this.toastr.success('Sua tarefa foi atualizada!', 'Muito bem.');
 }
 onDelete(id:string){
   this.serviceTarefa.delete(id);
+  this.toastr.info('Sua tarefa foi deletada!', 'Tudo certo.');
 }
 
 }
